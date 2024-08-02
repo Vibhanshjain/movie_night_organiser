@@ -6,21 +6,59 @@ document.addEventListener('DOMContentLoaded', () => {
     const rsvpForm = document.getElementById('rsvpForm');
     const commentForm = document.getElementById('commentForm');
 
+    function formDataToJson(formData) {
+        const obj = {};
+        formData.forEach((value, key) => {
+            obj[key] = value;
+        });
+        return obj;
+    }
+
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Convert FormData to JSON object
             const formData = new FormData(registerForm);
-            const response = await fetch('/api/register', {
-                method: 'POST',
-                body: JSON.stringify(Object.fromEntries(formData)),
-                headers: {
-                    'Content-Type': 'application/json',
+            const formDataJson = formDataToJson(formData);
+    
+            try {
+                // Perform the fetch request
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    body: JSON.stringify(formDataJson),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+    
+                // Check if the response is ok (status in the range 200-299)
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-            });
-            const result = await response.json();
-            window.alert(result.message);
+    
+                // Parse the JSON response
+                const result = await response.json();
+                
+                // Display the result message
+                window.alert(result.message);
+            } catch (error) {
+                // Log the error to the console and alert the user
+                console.error('Fetch error:', error);
+                window.alert('An error occurred while processing your request. Please try again.');
+            }
         });
     }
+    
+    // Function to convert FormData to a JSON object
+    function formDataToJson(formData) {
+        const obj = {};
+        formData.forEach((value, key) => {
+            obj[key] = value;
+        });
+        return obj;
+    }
+    
 
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -28,13 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(loginForm);
             const response = await fetch('/api/login', {
                 method: 'POST',
-                body: JSON.stringify(Object.fromEntries(formData)),
+                body: JSON.stringify(formDataToJson(formData)),
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             const result = await response.json();
-            alert(result.message);
+            alert("login successfully");
         });
     }
 
@@ -44,13 +82,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(addMovieForm);
             const response = await fetch('/api/movies', {
                 method: 'POST',
-                body: JSON.stringify(Object.fromEntries(formData)),
+                body: JSON.stringify(formDataToJson(formData)),
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             const result = await response.json();
-            alert(result.message);
+            alert("Successfully added");
         });
     }
 
@@ -73,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(createEventForm);
             const response = await fetch('/api/events', {
                 method: 'POST',
-                body: JSON.stringify(Object.fromEntries(formData)),
+                body: JSON.stringify(formDataToJson(formData)),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -89,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(rsvpForm);
             const response = await fetch('/api/rsvps', {
                 method: 'POST',
-                body: JSON.stringify(Object.fromEntries(formData)),
+                body: JSON.stringify(formDataToJson(formData)),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -105,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(commentForm);
             const response = await fetch('/api/comments', {
                 method: 'POST',
-                body: JSON.stringify(Object.fromEntries(formData)),
+                body: JSON.stringify(formDataToJson(formData)),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -114,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(result.message);
         });
     }
+
     async function getUsers() {
         try {
             const response = await fetch('http://localhost:3000/users'); // Make a GET request to the back-end API
@@ -128,8 +167,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Call the function when the document is fully loaded
-    document.addEventListener('DOMContentLoaded', (event) => {
-        getUsers();
-    });
-    
+    getUsers();
 });

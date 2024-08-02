@@ -5,12 +5,15 @@ const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
+const path = require('path');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-
-//app.use(express.json());
-
+app.use(express.static(path.join(__dirname, './public')));
+console.log(path.join(__dirname, './public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Database connection
@@ -80,6 +83,15 @@ app.get('/api/movies', (req, res) => {
     db.query(sql, (err, results) => {
         if (err) throw err;
         res.json({ movies: results });
+    });
+});
+
+// Fetch list of users
+app.get('/users', (req, res) => {
+    const sql = 'SELECT id, username, email FROM users';
+    db.query(sql, (err, results) => {
+        if (err) throw err;
+        res.json(results);
     });
 });
 
